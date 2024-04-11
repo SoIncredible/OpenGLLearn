@@ -1,3 +1,0 @@
-/Users/mac/Desktop/OpenGL/Mac/C1_GettingStart/P2_HelloTriangle/build/CMakeFiles/HelloGLFW.dir
-/Users/mac/Desktop/OpenGL/Mac/C1_GettingStart/P2_HelloTriangle/build/CMakeFiles/edit_cache.dir
-/Users/mac/Desktop/OpenGL/Mac/C1_GettingStart/P2_HelloTriangle/build/CMakeFiles/rebuild_cache.dir
