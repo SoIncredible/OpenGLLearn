@@ -18,6 +18,8 @@ const char *fragmentShaderSource = "#version 330 core\n"
                                    "{\n"
                                    "FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
                                    "}\0\n";
+const int windowWidth = 1920;
+const int windowHeight = 1080;
 
 int main()
 {
@@ -27,7 +29,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-    GLFWwindow *window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
+    GLFWwindow *window = glfwCreateWindow(windowWidth, windowHeight, "LearnOpenGL", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -43,18 +45,18 @@ int main()
         return -1;
     }
 
+    glViewport(600, 400, 200, 200);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-    glViewport(0, 0, 800, 600);
 
     float vertices[] = {
         // 第一个三角形
-        0.5f, 0.5f, 0.0f,  // 右上角
-        0.5f, -0.5f, 0.0f, // 右下角
-        -0.5f, 0.5f, 0.0f, // 左上角
+        1.0f, 1.0f, 0.0f,  // 右上角
+        1.0f, -1.0f, 0.0f, // 右下角
+        -1.0f, 1.0f, 0.0f, // 左上角
         // 第二个三角形
-        0.5f, -0.5f, 0.0f,  // 右下角
-        -0.5f, -0.5f, 0.0f, // 左下角
-        -0.5f, 0.5f, 0.0f   // 左上角
+        1.0f, -1.0f, 0.0f,  // 右下角
+        -1.0f, -1.0f, 0.0f, // 左下角
+        -1.0f, 1.0f, 0.0f   // 左上角
     };
     unsigned int vertexShader;
     // 获得顶点着色器VertexShader的ID
@@ -93,22 +95,6 @@ int main()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(0);
 
-    // // 创建顶点缓冲对象Vertex Buffer Object
-    // glGenVertexArrays(1, &VAO);
-    // glGenBuffers(1, &VBO);
-    // glBindVertexArray(VAO);
-    // // 使用GL_ARRAY_BUFFER的方式绑定了VBO
-    // glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    // // 将顶点的数据写入顶点缓冲对象中
-    // glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
-    // glEnableVertexAttribArray(0);
-    // glBindBuffer(GL_ARRAY_BUFFER, 0);
-    // glBindVertexArray(0);
-
-    std::cout << "VBO ID :" << VBO << std::endl;
-    std::cout << "VAO ID :" << VAO << std::endl;
     while (!glfwWindowShouldClose(window))
     {
         processInput(window);
@@ -133,7 +119,7 @@ int main()
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
-    glViewport(0, 0, width, height);
+    glViewport(600, 400, 200, 200);
 }
 
 void processInput(GLFWwindow *window)
