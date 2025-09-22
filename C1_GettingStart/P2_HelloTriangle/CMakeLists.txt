@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(HelloGLFW VERSION 0.1.0)
+project(HelloRectangle VERSION 0.1.0)
 
 # 使用 C++17 标准
 set(CMAKE_CXX_STANDARD 17)
