@@ -41,8 +41,8 @@ public:
             vertexCode = vShaderStream.str();
             fragmentCode = fShaderStream.str();
 
-            log(vertexCode);
-            log(fragmentCode);
+            // log(vertexCode);
+            // log(fragmentCode);
         }
         catch (std::ifstream::failure e)
         {
