@@ -35,8 +35,6 @@ int main()
         return -1;
     }
 
-    glfwMakeContextCurrent(window);
-
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -224,6 +222,8 @@ int main()
 
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO_Pos);
+    glDeleteBuffers(1, &VBO_Color);
+    glDeleteBuffers(1, &VBO_Tex);
     glDeleteBuffers(1, &EBO);
 
     glfwTerminate();
