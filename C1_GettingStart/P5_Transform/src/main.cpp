@@ -2,9 +2,6 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include "shader.h"
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 // 引入加载图片用的头文件
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -48,37 +45,103 @@ int main()
 
     Shader ourShader("../src/shaders/shader.vs", "../src/shaders/shader.fs");
 
-    // 创建要绘制的顶点 这些顶点是哪个坐标空间下的?
+    // 创建要绘制的顶点 这些顶点是NDC坐标空间
+    float vertices[] = {
+        // 后
+        0.5f, 0.5f, -0.5f,   // 右上
+        0.5f, -0.5f, -0.5f,  // 右下
+        -0.5f, -0.5f, -0.5f, // 左下
+
+        -0.5f, -0.5f, -0.5f, // 左下
+        -0.5f, 0.5f, -0.5f,  // 左上
+        0.5f, 0.5f, -0.5f,   // 右上
+
+        // 前
+        0.5f, 0.5f, 0.5f,   // 右上
+        0.5f, -0.5f, 0.5f,  // 右下
+        -0.5f, -0.5f, 0.5f, // 左下
+
+        -0.5f, -0.5f, 0.5f, // 左下
+        -0.5f, 0.5f, 0.5f,  // 左上
+        0.5f, 0.5f, 0.5f,  // 右上
+
+        // 左
+        -0.5f, 0.5f, 0.5f,   // 右上
+        -0.5f, -0.5f, 0.5f,  // 右下
+        -0.5f, -0.5f, -0.5f, // 左下
+       
+        -0.5f, -0.5f, -0.5f, // 左下
+        -0.5f, 0.5f, -0.5f,  // 左上
+        -0.5f, 0.5f, 0.5f,   // 右上
+
+        // 右
+        0.5f, 0.5f, 0.5f,   // 右上
+        0.5f, -0.5f, 0.5f,  // 右下
+        0.5f, -0.5f, -0.5f, // 左下
+        
+        0.5f, -0.5f, -0.5f, // 左下
+        0.5f, 0.5f, -0.5f,  // 左上
+        0.5f, 0.5f, 0.5f,   // 右上
+
+        // 上
+        0.5f, 0.5f, -0.5f,   // 右上
+        0.5f, 0.5f, 0.5f,  // 右下
+        -0.5f, 0.5f, 0.5f, // 左下
+       
+        -0.5f, 0.5f, 0.5f, // 左下
+        -0.5f, 0.5f, -0.5f,  // 左上
+         0.5f, 0.5f, -0.5f,   // 右上
+
+        // 下
+        0.5f, -0.5f, 0.5f,   // 右上
+        0.5f, -0.5f, -0.5f,  // 右下
+        -0.5f, -0.5f, -0.5f, // 左下
+        
+        -0.5f, -0.5f, -0.5f, // 左下
+        -0.5f, -0.5f, 0.5f,  // 左上
+        0.5f, -0.5f, 0.5f,   // 右上
+    };
+
     // float vertices[] = {
     //     // 位置
-    //     0.5f, 0.5f, 0.0f,   // 右上
-    //     0.5f, -0.5f, 0.0f,  // 右下
-    //     -0.5f, -0.5f, 0.0f, // 左下
-    //     -0.5f, 0.5f, 0.0f,  // 左上
+    //     1.0f, 0.0f, 0.0f,   // 右上
+    //     1.0f, -1.0f, 0.0f,  // 右下
+    //     0.0f, -1.0f, 0.0f, // 左下
+    //     0.0f, 0.0f, 0.0f,  // 左上
     // };
-
-    float vertices[] = {
-        // 位置
-        1.0f, 0.0f, 0.0f,   // 右上
-        1.0f, -1.0f, 0.0f,  // 右下
-        0.0f, -1.0f, 0.0f, // 左下
-        0.0f, 0.0f, 0.0f,  // 左上
-    };
 
     // 颜色
     float colors[] = {
-        1.0f,
-        0.0f,
-        0.0f,
-        0.0f,
-        1.0f,
-        0.0f,
-        0.0f,
-        0.0f,
-        1.0f,
-        1.0f,
-        1.0f,
-        0.0f,
+ 
+        1.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 1.0f,
+        1.0f, 1.0f, 0.0f,
+
+        1.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 1.0f,
+        1.0f, 1.0f, 0.0f,
+
+        1.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 1.0f,
+        1.0f, 1.0f, 0.0f,
+
+        1.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 1.0f,
+        1.0f, 1.0f, 0.0f,
+
+        1.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 1.0f,
+        1.0f, 1.0f, 0.0f,
+
+        1.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 1.0f,
+        1.0f, 1.0f, 0.0f,
     };
 
     // 纹理坐标
@@ -86,25 +149,70 @@ int main()
         1.0f, 1.0f,
         1.0f, 0.0f,
         0.0f, 0.0f,
-        0.0f, 1.0f};
+       
+        0.0f, 0.0f,
+        0.0f, 1.0f,
+        1.0f, 1.0f,
 
-    unsigned int indices[] = {
-        // 注意索引从0开始
-        // 此例的索引(0, 1, 2, 3)就是顶点数组的vertices的下标，
-        // 这样就可以由下表代表顶点组合成矩形
+        1.0f, 1.0f,
+        1.0f, 0.0f,
+        0.0f, 0.0f,
+       
+        0.0f, 0.0f,
+        0.0f, 1.0f,
+        1.0f, 1.0f,
 
-        0, 1, 3, // 第一个三角形
-        1, 2, 3  // 第二个三角形
+        1.0f, 1.0f,
+        1.0f, 0.0f,
+        0.0f, 0.0f,
+       
+        0.0f, 0.0f,
+        0.0f, 1.0f,
+        1.0f, 1.0f,
+
+        1.0f, 1.0f,
+        1.0f, 0.0f,
+        0.0f, 0.0f,
+       
+        0.0f, 0.0f,
+        0.0f, 1.0f,
+        1.0f, 1.0f,
+
+        1.0f, 1.0f,
+        1.0f, 0.0f,
+        0.0f, 0.0f,
+       
+        0.0f, 0.0f,
+        0.0f, 1.0f,
+        1.0f, 1.0f,
+
+        1.0f, 1.0f,
+        1.0f, 0.0f,
+        0.0f, 0.0f,
+       
+        0.0f, 0.0f,
+        0.0f, 1.0f,
+        1.0f, 1.0f,
     };
 
-    unsigned int VAO, EBO;
+    // unsigned int indices[] = {
+    //     // 注意索引从0开始
+    //     // 此例的索引(0, 1, 2, 3)就是顶点数组的vertices的下标，
+    //     // 这样就可以由下表代表顶点组合成矩形
+
+    //     0, 1, 3, // 第一个三角形
+    //     1, 2, 3  // 第二个三角形
+    // };
+
+    unsigned int VAO;
+    // , EBO;
     glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &EBO);
+    // glGenBuffers(1, &EBO);
 
     glBindVertexArray(VAO);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    // glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     // 位置属性
     unsigned int VBO_Pos;
@@ -182,6 +290,21 @@ int main()
     }
     stbi_image_free(data);
 
+    glm::vec3 cubePositions[] = {
+        glm::vec3(0.0f, 0.0f, 0.0f),
+        glm::vec3(2.0f, 5.0f, -15.0f),
+        glm::vec3(-1.5f, -2.2f, -2.5f),
+        glm::vec3(-3.8f, -2.0f, -12.3f),
+        glm::vec3(2.4f, -0.4f, -3.5f),
+        glm::vec3(-1.7f, 3.0f, -7.5f),
+        glm::vec3(1.3f, -2.0f, -2.5f),
+        glm::vec3(1.5f, 2.0f, -2.5f),
+        glm::vec3(1.5f, 0.2f, -1.5f),
+        glm::vec3(-1.3f, 1.0f, -1.5f)
+    };
+
+    glEnable(GL_DEPTH_TEST);
+
     ourShader.use();
     ourShader.setInt("texture1", 0);
     ourShader.setInt("texture2", 1);
@@ -197,7 +320,7 @@ int main()
         // render
         // ------
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // bind textures on corresponding texture units
         glActiveTexture(GL_TEXTURE0);
@@ -211,20 +334,48 @@ int main()
         // // x分量平移0.5, y分量平移-0.5
         // transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
 
-        glm::mat4 transform = glm::mat4(1.0f);
-        transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));                   // 最终位置
-        transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f)); // 旋转
-        transform = glm::translate(transform, glm::vec3(-0.5f, 0.5f, 0.0f));                   // 先将中心移到原点（反向平移）
+        // glm::mat4 transform = glm::mat4(1.0f);
+        // transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));                   // 最终位置
+        // transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f)); // 旋转
+        // transform = glm::translate(transform, glm::vec3(-0.5f, 0.5f, 0.0f));                   // 先将中心移到原点（反向平移）
+
+        // glm::mat4 model = glm::mat4(1.0f);
+        // model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
+
+        glm::mat4 view = glm::mat4(1.0f);
+        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+
+        glm::mat4 projection = glm::mat4(1.0f);
+        projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+
+        unsigned int viewLoc = glGetUniformLocation(ourShader.ID, "view");
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
+        unsigned int projectionLoc = glGetUniformLocation(ourShader.ID, "projection");
+        glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
         // get matrix's uniform location and set matrix
-        ourShader.use();
-        unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
-        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+        // ourShader.use();
+        // unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
+        // glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
 
         // render container
         glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
+        // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        for (int i = 0; i < 10; i++){ // 这10个cube用的是同一组顶点信息
+            glm::mat4 model = glm::mat4(1.0f);
+            float angle = 20.0f * (i+1);
+            // 先平移回原点
+            // model = glm::translate(model, -1.0f * cubePositions[i]);
+            // model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+            // 记住先平移再旋转!!! 为什么?
+            model = glm::translate(model, cubePositions[i]);
+            // 计算旋转
+            model = glm::rotate(model, (float) glfwGetTime() * glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+            ourShader.setMat4("model", model);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
+            
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
@@ -234,7 +385,7 @@ int main()
     glDeleteBuffers(1, &VBO_Pos);
     glDeleteBuffers(1, &VBO_Color);
     glDeleteBuffers(1, &VBO_Tex);
-    glDeleteBuffers(1, &EBO);
+    // glDeleteBuffers(1, &EBO);
 
     glfwTerminate();
 
