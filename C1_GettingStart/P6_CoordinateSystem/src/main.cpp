@@ -372,6 +372,7 @@ int main()
             // model = glm::translate(model, -1.0f * cubePositions[i]);
             // model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
             // 记住先平移再旋转!!! 为什么?
+            // 
             model = glm::translate(model, cubePositions[i]);
             // 计算旋转
             model = glm::rotate(model, (float) glfwGetTime() * glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
