@@ -372,7 +372,11 @@ int main()
             // model = glm::translate(model, -1.0f * cubePositions[i]);
             // model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
             // 记住先平移再旋转!!! 为什么?
-            // 
+            // 有两种理解矩阵变换的视角: 一种是主动变换(active transformation), 另一种是被动变换(positive transformation) 
+            // 在主动变换的视角下, 我们认为参与变换的各个坐标系都是不动的, 所有的顶点在移动
+            // 在被动变换的视角下, 我们认为参与变换的各个坐标是移动的, 而所有的顶点是不动的
+            // 我在这里理解错了, 这里是模型矩阵Model Transform 将顶点从坐标空间转换到世界空间
+            // Model Matrix为何会按照下面的方式构建呢?
             model = glm::translate(model, cubePositions[i]);
             // 计算旋转
             model = glm::rotate(model, (float) glfwGetTime() * glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
