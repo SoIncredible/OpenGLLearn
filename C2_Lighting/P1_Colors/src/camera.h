@@ -15,12 +15,12 @@ private:
     // 俯仰角默认值
     float pitch = 0.0f;
 
-    float fov = 0.0f;
+    float fov = 45.0f;
 
     bool firstMouse = true;
     float lastX = 400, lastY = 300;
 
-    glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+    glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 10.0f);
     glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
     glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 };
@@ -66,7 +66,7 @@ void camera::ProcessMouseInput(GLFWwindow* window, double xpos, double ypos){
     glm::vec3 direction;
     direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
     direction.y = sin(glm::radians(pitch));
-    direction.z = sin(glm::radians(yaw) * cos(glm::radians(pitch)));
+    direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
     cameraFront = glm::normalize(direction);
 }
 

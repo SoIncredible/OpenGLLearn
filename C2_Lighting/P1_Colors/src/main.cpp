@@ -49,14 +49,54 @@ int main()
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
 
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        std::cout << "Failed to initialize GLAD" << std::endl;
-        return -1;
-    }
-
     Shader ourShader("../src/shaders/shader.vs", "../src/shaders/shader.fs");
     Shader lightShader("../src/shaders/shader.vs", "../src/shaders/light.fs");
+
+    // 1. 定义光照立方体的顶点数据（小立方体，边长0.2，中心在原点）
+    float lightVertices[] = {
+        -0.1f, -0.1f, -0.1f,
+        0.1f, -0.1f, -0.1f,
+        0.1f,  0.1f, -0.1f,
+        0.1f,  0.1f, -0.1f,
+        -0.1f,  0.1f, -0.1f,
+        -0.1f, -0.1f, -0.1f,
+
+        -0.1f, -0.1f,  0.1f,
+        0.1f, -0.1f,  0.1f,
+        0.1f,  0.1f,  0.1f,
+        0.1f,  0.1f,  0.1f,
+        -0.1f,  0.1f,  0.1f,
+        -0.1f, -0.1f,  0.1f,
+
+        -0.1f,  0.1f,  0.1f,
+        -0.1f,  0.1f, -0.1f,
+        -0.1f, -0.1f, -0.1f,
+        -0.1f, -0.1f, -0.1f,
+        -0.1f, -0.1f,  0.1f,
+        -0.1f,  0.1f,  0.1f,
+
+        0.1f,  0.1f,  0.1f,
+        0.1f,  0.1f, -0.1f,
+        0.1f, -0.1f, -0.1f,
+        0.1f, -0.1f, -0.1f,
+        0.1f, -0.1f,  0.1f,
+        0.1f,  0.1f,  0.1f,
+
+        -0.1f, -0.1f, -0.1f,
+        0.1f, -0.1f, -0.1f,
+        0.1f, -0.1f,  0.1f,
+        0.1f, -0.1f,  0.1f,
+        -0.1f, -0.1f,  0.1f,
+        -0.1f, -0.1f, -0.1f,
+
+        -0.1f,  0.1f, -0.1f,
+        0.1f,  0.1f, -0.1f,
+        0.1f,  0.1f,  0.1f,
+        0.1f,  0.1f,  0.1f,
+        -0.1f,  0.1f,  0.1f,
+        -0.1f,  0.1f, -0.1f,
+    };
+
     // 创建要绘制的顶点 这些顶点是NDC坐标空间?
     // 这些数据应该是模型空间的数据
     float vertices[] = {
@@ -272,24 +312,16 @@ int main()
         1.0f, 1.0f,
     };
 
-    // unsigned int indices[] = {
-    //     // 注意索引从0开始
-    //     // 此例的索引(0, 1, 2, 3)就是顶点数组的vertices的下标，
-    //     // 这样就可以由下表代表顶点组合成矩形
-
-    //     0, 1, 3, // 第一个三角形
-    //     1, 2, 3  // 第二个三角形
-    // };
 
     unsigned int lightVAO;
     glGenVertexArrays(1, &lightVAO);
     glBindVertexArray(lightVAO);
 
     // 位置属性
-    unsigned int VBO_Pos;
-    glGenBuffers(1, &VBO_Pos);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO_Pos);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    unsigned int VBO_Pos_Light;
+    glGenBuffers(1, &VBO_Pos_Light);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_Pos_Light);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(lightVertices), lightVertices, GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(0);
 
@@ -304,6 +336,7 @@ int main()
     // glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     // 位置属性
+    unsigned int VBO_Pos;
     glGenBuffers(1, &VBO_Pos);
     glBindBuffer(GL_ARRAY_BUFFER, VBO_Pos);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -367,31 +400,16 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // create transformations
-        // glm::mat4 transform = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-        // transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
-        // // x分量平移0.5, y分量平移-0.5
-        // transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
-
-        // glm::mat4 transform = glm::mat4(1.0f);
-        // transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));                   // 最终位置
-        // transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f)); // 旋转
-        // transform = glm::translate(transform, glm::vec3(-0.5f, 0.5f, 0.0f));                   // 先将中心移到原点（反向平移）
-
-        // glm::mat4 model = glm::mat4(1.0f);
-        // model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
-
         glm::mat4 view = cam.GetViewMatrix();
 
-        // 投影矩阵是干什么的?
         glm::mat4 projection = glm::mat4(1.0f);
         projection = cam.GetProjectionMatrix();
 
         glm::mat4 model = glm::mat4(1.0f);
-        // glm::vec3(0.0f, 0.0f, 0.0f),
-        //     glm::vec3(2.0f, 5.0f, -15.0f),
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
 
+        glm::mat4 lightModel = glm::mat4(1.0f);
+        lightModel = glm::translate(lightModel, glm::vec3(2.5f, 5.0f, -15.0f));
         glBindVertexArray(lightVAO);
         lightShader.use();
 
@@ -401,8 +419,10 @@ int main()
         unsigned int projectionLoc = glGetUniformLocation(lightShader.ID, "projection");
         glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-        lightShader.setMat4("model", model);
-        // render container
+        lightShader.setMat4("model", lightModel);
+
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+    
         glBindVertexArray(VAO);
         ourShader.use();
 
@@ -416,26 +436,13 @@ int main()
         // glm::vec3(0.0f, 0.0f, 0.0f),
         //     glm::vec3(2.0f, 5.0f, -15.0f),
         model = glm::translate(model, glm::vec3(2.0f, 5.0f, -15.0f));
+
+        // lightColor是需要从光源那里拿到, 传递给Objectshader的, 此处这样写只是临时写法
+        ourShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
+        ourShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+
         ourShader.setMat4("model", model);
-        // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        // for (int i = 0; i < 10; i++){ // 这10个cube用的是同一组顶点信息
-        //     glm::mat4 model = glm::mat4(1.0f);
-        //     float angle = 20.0f * (i+1);
-        //     // 先平移回原点
-        //     // model = glm::translate(model, -1.0f * cubePositions[i]);
-        //     // model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-        //     // 记住先平移再旋转!!! 为什么?
-        //     // 有两种理解矩阵变换的视角: 一种是主动变换(active transformation), 另一种是被动变换(positive transformation) 
-        //     // 在主动变换的视角下, 我们认为参与变换的各个坐标系都是不动的, 所有的顶点在移动
-        //     // 在被动变换的视角下, 我们认为参与变换的各个坐标是移动的, 而所有的顶点是不动的
-        //     // 我在这里理解错了, 这里是模型矩阵Model Transform 将顶点从坐标空间转换到世界空间
-        //     // Model Matrix为何会按照下面的方式构建呢?
-        //     model = glm::translate(model, cubePositions[i]);
-        //     // 计算旋转
-        //     model = glm::rotate(model, (float) glfwGetTime() * glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-        //     ourShader.setMat4("model", model);
-        //     glDrawArrays(GL_TRIANGLES, 0, 36);
-        // }
+        glDrawArrays(GL_TRIANGLES, 0, 36);
             
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
@@ -445,6 +452,7 @@ int main()
 
     glDeleteVertexArrays(1, &lightVAO);
     glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO_Pos_Light);
     glDeleteBuffers(1, &VBO_Pos);
     glDeleteBuffers(1, &VBO_Color);
     glDeleteBuffers(1, &VBO_Tex);

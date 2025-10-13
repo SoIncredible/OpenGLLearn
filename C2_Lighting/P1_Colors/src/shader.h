@@ -125,6 +125,10 @@ public:
         glUniformMatrix4fv(matLoc, 1, GL_FALSE, glm::value_ptr(mat));
     }
 
+    void setVec3(const std::string &name, float value1, float value2, float value3) {
+        glUniform3f(glGetUniformLocation(ID, name.c_str()), value1, value2, value3);
+    }
+
 private:
     void log(std::string logInfo)
     {
