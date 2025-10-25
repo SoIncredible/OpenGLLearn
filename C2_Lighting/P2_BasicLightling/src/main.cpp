@@ -52,51 +52,6 @@ int main()
     Shader ourShader("../src/shaders/shader.vs", "../src/shaders/shader.fs");
     Shader lightShader("../src/shaders/light.vs", "../src/shaders/light.fs");
 
-    // 1. 定义光照立方体的顶点数据（小立方体，边长0.2，中心在原点）
-    float lightVertices[] = {
-        -0.1f, -0.1f, -0.1f,
-        0.1f, -0.1f, -0.1f,
-        0.1f,  0.1f, -0.1f,
-        0.1f,  0.1f, -0.1f,
-        -0.1f,  0.1f, -0.1f,
-        -0.1f, -0.1f, -0.1f,
-
-        -0.1f, -0.1f,  0.1f,
-        0.1f, -0.1f,  0.1f,
-        0.1f,  0.1f,  0.1f,
-        0.1f,  0.1f,  0.1f,
-        -0.1f,  0.1f,  0.1f,
-        -0.1f, -0.1f,  0.1f,
-
-        -0.1f,  0.1f,  0.1f,
-        -0.1f,  0.1f, -0.1f,
-        -0.1f, -0.1f, -0.1f,
-        -0.1f, -0.1f, -0.1f,
-        -0.1f, -0.1f,  0.1f,
-        -0.1f,  0.1f,  0.1f,
-
-        0.1f,  0.1f,  0.1f,
-        0.1f,  0.1f, -0.1f,
-        0.1f, -0.1f, -0.1f,
-        0.1f, -0.1f, -0.1f,
-        0.1f, -0.1f,  0.1f,
-        0.1f,  0.1f,  0.1f,
-
-        -0.1f, -0.1f, -0.1f,
-        0.1f, -0.1f, -0.1f,
-        0.1f, -0.1f,  0.1f,
-        0.1f, -0.1f,  0.1f,
-        -0.1f, -0.1f,  0.1f,
-        -0.1f, -0.1f, -0.1f,
-
-        -0.1f,  0.1f, -0.1f,
-        0.1f,  0.1f, -0.1f,
-        0.1f,  0.1f,  0.1f,
-        0.1f,  0.1f,  0.1f,
-        -0.1f,  0.1f,  0.1f,
-        -0.1f,  0.1f, -0.1f,
-    };
-
     // 创建要绘制的顶点 这些顶点是NDC坐标空间?
     // 这些数据应该是模型空间的数据
     float vertices[] = {
@@ -238,8 +193,8 @@ int main()
     unsigned int VBO_Pos_Light;
     glGenBuffers(1, &VBO_Pos_Light);
     glBindBuffer(GL_ARRAY_BUFFER, VBO_Pos_Light);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(lightVertices), lightVertices, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(0);
 
     unsigned int VAO;
@@ -263,7 +218,7 @@ int main()
     glGenBuffers(1, &VBO_Normal);
     glBindBuffer(GL_ARRAY_BUFFER, VBO_Normal);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
     // load and create a texture
@@ -327,6 +282,7 @@ int main()
         ourShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
         ourShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
         ourShader.setVec3("lightPos", lightPos.x, lightPos.y, lightPos.z);
+        ourShader.setVec3("viewPos", cam.Position());
 
         ourShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 36);

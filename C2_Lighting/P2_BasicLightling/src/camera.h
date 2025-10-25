@@ -9,6 +9,8 @@ public:
 
     void ProcessScrollInput(GLFWwindow *window, double xoffset, double yoffset);
 
+    glm::vec3 Position();
+
 private:
     // 巡航角默认值
     float yaw = -90.0f;
@@ -106,4 +108,8 @@ void camera::ProcessScrollInput(GLFWwindow* window, double xoffset, double yoffs
     {
         fov = 45.0f;
     }
+}
+
+glm::vec3 camera::Position(){
+    return cameraPos;
 }
