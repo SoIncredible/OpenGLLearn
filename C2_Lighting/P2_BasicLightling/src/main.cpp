@@ -228,7 +228,7 @@ int main()
         1.0f, 1.0f,
     };
 
-    glm::vec3 lightPos;
+    glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 
     unsigned int lightVAO;
     glGenVertexArrays(1, &lightVAO);
@@ -243,7 +243,6 @@ int main()
     glEnableVertexAttribArray(0);
 
     unsigned int VAO;
-    // , EBO;
     glGenVertexArrays(1, &VAO);
     // glGenBuffers(1, &EBO);
 
@@ -263,42 +262,13 @@ int main()
     unsigned int VBO_Normal;
     glGenBuffers(1, &VBO_Normal);
     glBindBuffer(GL_ARRAY_BUFFER, VBO_Normal);
-    glBufferData(GL_ARRAY_BUFFER, sizeof);
-
-    // 颜色属性
-    unsigned int VBO_Color;
-    glGenBuffers(1, &VBO_Color);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO_Color);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(1);
-
-    // 纹理坐标
-    unsigned int VBO_Tex;
-    glGenBuffers(1, &VBO_Tex);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO_Tex);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(tex), tex, GL_STATIC_DRAW);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void *)0);
-    glEnableVertexAttribArray(2);
 
     // load and create a texture
     // -------------------------
     stbi_set_flip_vertically_on_load(true);
-
-    // 这些数据是世界空间下的数据
-    // glm::vec3 cubePositions[] = {
-    //     glm::vec3(0.0f, 0.0f, 0.0f),
-    //     glm::vec3(2.0f, 5.0f, -15.0f),
-    //     glm::vec3(-1.5f, -2.2f, -2.5f),
-    //     glm::vec3(-3.8f, -2.0f, -12.3f),
-    //     glm::vec3(2.4f, -0.4f, -3.5f),
-    //     glm::vec3(-1.7f, 3.0f, -7.5f),
-    //     glm::vec3(1.3f, -2.0f, -2.5f),
-    //     glm::vec3(1.5f, 2.0f, -2.5f),
-    //     glm::vec3(1.5f, 0.2f, -1.5f),
-    //     glm::vec3(-1.3f, 1.0f, -1.5f)
-    // };
-
    
     glEnable(GL_DEPTH_TEST);
 
@@ -327,11 +297,9 @@ int main()
         glm::mat4 projection = glm::mat4(1.0f);
         projection = cam.GetProjectionMatrix();
 
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-
         glm::mat4 lightModel = glm::mat4(1.0f);
-        lightModel = glm::translate(lightModel, glm::vec3(2.5f, 5.0f, -15.0f));
+        lightModel = glm::translate(lightModel, lightPos);
+        lightModel = glm::scale(lightModel, glm::vec3(0.2f));
         glBindVertexArray(lightVAO);
         lightShader.use();
 
@@ -354,11 +322,7 @@ int main()
         projectionLoc = glGetUniformLocation(ourShader.ID, "projection");
         glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-        model = glm::mat4(1.0f);
-        // glm::vec3(0.0f, 0.0f, 0.0f),
-        //     glm::vec3(2.0f, 5.0f, -15.0f),
-        model = glm::translate(model, glm::vec3(2.0f, 5.0f, -15.0f));
-
+        glm::mat4 model = glm::mat4(1.0f);
         // lightColor是需要从光源那里拿到, 传递给Objectshader的, 此处这样写只是临时写法
         ourShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
         ourShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
@@ -377,9 +341,6 @@ int main()
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO_Pos_Light);
     glDeleteBuffers(1, &VBO_Pos);
-    glDeleteBuffers(1, &VBO_Color);
-    glDeleteBuffers(1, &VBO_Tex);
-    // glDeleteBuffers(1, &EBO);
 
     glfwTerminate();
 
