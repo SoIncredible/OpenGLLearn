@@ -19,11 +19,19 @@ void main()
     // 计算漫反射光
     vec3 norm = normalize(Normal);
     vec3 lightDir = normalize(lightPos - FragPos);
-    float diff = max(dot(norm, lightColor), 0.0f);
+    float diff = max(dot(norm, lightDir), 0.0f); // 这里之前写成dot(norm, lightDir)了, 是不对的
     vec3 diffuse = diff * lightColor;
-    // FragColor = mix(texture(texture1, TexCoord), texture(texture2, TexCoord), 0.2);
 
     // 计算高光
-    vec3 result = (ambient + diffuse) * objectColor;
+    float specularStrength = 1.0f;
+    vec3 viewDir = normalize(viewPos - FragPos);
+    vec3 reflectDir = reflect(-lightDir, norm); // 计算反射方向
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 128);
+    vec3 specular = specularStrength * spec * lightColor;
+    // vec3 specular = vec3(1.0f, 1.0f, 1.0f); // 直接设置为白色，不依赖计算
+    vec3 result = (ambient + diffuse + specular) * objectColor;
+    // vec3 result = (ambient + diffuse) * objectColor;
     FragColor = vec4(result, 1.0);
+
+    FragColor = vec4((norm + 1.0f) / 2.0f, 1.0f); // 法线向量[-1,1]映射到[0,1]颜色
 }

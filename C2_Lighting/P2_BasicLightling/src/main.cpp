@@ -278,13 +278,15 @@ int main()
         glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
         glm::mat4 model = glm::mat4(1.0f);
-        // lightColor是需要从光源那里拿到, 传递给Objectshader的, 此处这样写只是临时写法
+        // lightColor是需要从光源那里拿到, 传递给ObjectsShader的, 此处这样写只是临时写法
         ourShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
         ourShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
         ourShader.setVec3("lightPos", lightPos.x, lightPos.y, lightPos.z);
         ourShader.setVec3("viewPos", cam.Position());
 
         ourShader.setMat4("model", model);
+
+        // 驱动Shader
         glDrawArrays(GL_TRIANGLES, 0, 36);
             
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
