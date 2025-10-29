@@ -248,47 +248,62 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glm::mat4 view = cam.GetViewMatrix();
+        glm::mat4 projection = cam.GetProjectionMatrix();
 
-        glm::mat4 projection = glm::mat4(1.0f);
-        projection = cam.GetProjectionMatrix();
-
+        // --------------------------
+        // 1. 绘制光源立方体（带旋转）
+        // --------------------------
         glm::mat4 lightModel = glm::mat4(1.0f);
-        lightModel = glm::translate(lightModel, lightPos);
-        lightModel = glm::scale(lightModel, glm::vec3(0.2f));
+        // lightModel = glm::scale(lightModel, glm::vec3(0.2f)); // 先缩放
+        float lightRotateSpeed = 30.0f;
+        // float lightAngle = glm::radians(lightRotateSpeed * glfwGetTime());
+        float lightAngle = 0.0f;
+        lightModel = glm::rotate(lightModel, lightAngle, glm::vec3(1.0f, 1.0f, 1.0f)); // 再旋转
+        lightModel = glm::translate(lightModel, lightPos);                             // 最后平移
+
+        // 计算光源旋转后的世界空间位置
+        glm::vec4 lightWorldPos = lightModel * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+        glm::vec3 currentLightPos = lightWorldPos;
+
+        // 绘制光源
         glBindVertexArray(lightVAO);
         lightShader.use();
-
-        unsigned int viewLoc = glGetUniformLocation(lightShader.ID, "view");
-        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-
-        unsigned int projectionLoc = glGetUniformLocation(lightShader.ID, "projection");
-        glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
+        lightShader.setMat4("view", view);
+        lightShader.setMat4("projection", projection);
         lightShader.setMat4("model", lightModel);
-
         glDrawArrays(GL_TRIANGLES, 0, 36);
-    
+
+        // --------------------------
+        // 2. 绘制普通立方体（绕光源旋转，明暗变化正常）
+        // --------------------------
         glBindVertexArray(VAO);
         ourShader.use();
+        ourShader.setMat4("view", view);
+        ourShader.setMat4("projection", projection);
 
-        viewLoc = glGetUniformLocation(ourShader.ID, "view");
-        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+        // 构建普通立方体的绕点旋转模型矩阵
+        float rotateSpeed = 45.0f;
+        // float angle = glm::radians(rotateSpeed * glfwGetTime());
+        float angle = 0.0f;
+        glm::vec3 rotateAxis(0.0f, 1.0f, 0.0f);
+        glm::vec3 pivotPoint = currentLightPos; // 旋转中心 = 光源当前世界位置
+        glm::vec3 offset(5.0f, 0.0f, 0.0f);     // 增大旋转半径
 
-        projectionLoc = glGetUniformLocation(ourShader.ID, "projection");
-        glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+        glm::mat4 translateToPivot = glm::translate(glm::mat4(1.0f), pivotPoint);
+        glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), angle, rotateAxis);
+        glm::mat4 translateOffset = glm::translate(glm::mat4(1.0f), offset);
+        glm::mat4 model = translateToPivot * rotation * translateOffset;
+        model = glm::rotate(model, angle * 5.0f, glm::vec3(0.0f, 1.0f, 0.0f)); // 自转
 
-        glm::mat4 model = glm::mat4(1.0f);
-        // lightColor是需要从光源那里拿到, 传递给ObjectsShader的, 此处这样写只是临时写法
+        // 传递参数（关键：lightPos用当前光源世界位置）
         ourShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
         ourShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-        ourShader.setVec3("lightPos", lightPos.x, lightPos.y, lightPos.z);
+        ourShader.setVec3("lightPos", currentLightPos); // 同步光源位置
         ourShader.setVec3("viewPos", cam.Position());
-
         ourShader.setMat4("model", model);
 
-        // 驱动Shader
         glDrawArrays(GL_TRIANGLES, 0, 36);
-            
+
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
